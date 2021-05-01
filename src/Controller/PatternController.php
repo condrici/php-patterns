@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Model\Bridge\HelloWorldService;
+use App\Model\Bridge\PlainTextFormatter;
 use App\Model\DataMapper\StorageAdapter;
 use App\Model\DataMapper\User;
 use App\Model\DataMapper\UserMapper;
@@ -17,6 +19,8 @@ class PatternController extends AbstractController
     public function index(): Response
     {
         $this->testDataMapper();
+        echo '<br>';
+        $this->testBridge();
 
         return $this->render('pattern/index.html.twig', [
             'controller_name' => 'PatternController',
@@ -37,5 +41,16 @@ class PatternController extends AbstractController
         $fail = 'Data Mapper Pattern: Fail';
 
         echo $user instanceof User ? $success : $fail;
+    }
+
+    private function testBridge()
+    {
+        $plainTextFormatter = new PlainTextFormatter();
+        $service = new HelloWorldService($plainTextFormatter);
+
+        $success = 'Bridge Pattern: Success';
+        $fail = 'Bridge Pattern: Fail';
+
+        echo is_string($service->get()) ? $success : $fail;
     }
 }
