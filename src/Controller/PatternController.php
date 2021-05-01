@@ -7,6 +7,7 @@ use App\Model\Bridge\PlainTextFormatter;
 use App\Model\DataMapper\StorageAdapter;
 use App\Model\DataMapper\User;
 use App\Model\DataMapper\UserMapper;
+use App\Model\Observer\UserObserver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +22,8 @@ class PatternController extends AbstractController
         $this->testDataMapper();
         echo '<br>';
         $this->testBridge();
+        echo '<br>';
+        $this->testObserver();
 
         return $this->render('pattern/index.html.twig', [
             'controller_name' => 'PatternController',
@@ -52,5 +55,19 @@ class PatternController extends AbstractController
         $fail = 'Bridge Pattern: Fail';
 
         echo is_string($service->get()) ? $success : $fail;
+    }
+
+    private function testObserver()
+    {
+        $user = new \App\Model\Observer\User();
+        $observer = new UserObserver();
+        $user->attach($observer);
+        $user->changeEmail();
+        $changes = count($observer->getChangedUsers());
+
+        $success = 'Observer Pattern: Success';
+        $fail = 'Observer Pattern: Fail';
+
+        echo $changes === 1 ?  $success : $fail;
     }
 }
